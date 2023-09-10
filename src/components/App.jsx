@@ -16,25 +16,24 @@ export class App extends Component {
     ],
     filter: '',
   };
-  addContact = task => {
-    const searchSameName = this.state.contacts
-      .map(cont => cont.name)
-      .includes(task.name);
+  addContact = formData => {
+    const searchSameName = this.state.contacts.some(
+      cont =>
+        cont.name.toLocaleLowerCase() === formData.name.toLocaleLowerCase()
+    );
 
     if (searchSameName) {
-      alert(`${task.name} is already in contacts`);
-    } else if (task.length === 0) {
-      alert('Fields must be filled!');
-    } else {
-      const contact = {
-        ...task,
-        id: nanoid(),
-      };
-
-      this.setState(prevState => ({
-        contacts: [...prevState.contacts, contact],
-      }));
+      alert(`${formData.name} is already in contacts`);
+      return;
     }
+    const contact = {
+      ...formData,
+      id: nanoid(),
+    };
+
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, contact],
+    }));
   };
 
   changeFilter = e => {
@@ -72,7 +71,6 @@ export class App extends Component {
         <h2>Contacts</h2>
         <Filter value={filter} onChangeFilter={this.changeFilter} />
         <ContactList
-          value={filter}
           contacts={visibleContacts}
           onRemoveContact={this.removeContact}
         />
